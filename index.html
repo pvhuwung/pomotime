@@ -1,731 +1,921 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Task Manager with Pomodoro Timer</title>
-  <style>
-    :root {
-      --pomodoro-color: #FF6347;
-      --short-break-color: #28a745;
-      --long-break-color: #1E90FF;
-      --progress: 0deg;
-      --timer-color: var(--pomodoro-color);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PomoTM</title>
+    <style>
+        :root {
+            --pomodoro-color: #FF6347;
+            --short-break-color: #28a745;
+            --long-break-color: #1E90FF;
+            --progress: 0deg;
+            --timer-color: var(--pomodoro-color);
+        }
 
-    body {
-      font-family: 'Arial', sans-serif;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: var(--pomodoro-color);
-      color: #333;
-    }
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--pomodoro-color);
+            color: #333;
+        }
 
-    .main-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-    }
-    .glassmorphic {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
 
-    .add-task-btn {
-      background-color: var(--timer-color);
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s, transform 0.1s;
-      margin-bottom: 10px;
-    }
+        .glassmorphic {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
 
-    .add-task-btn:hover {
-      opacity: 0.9;
-    }
+        .add-task-btn {
+            background-color: var(--timer-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            margin-bottom: 10px;
+        }
 
-    .add-task-btn:active {
-      transform: scale(0.98);
-    }
+        .add-task-btn:hover {
+            opacity: 0.9;
+        }
 
-    .timer-section, .task-section {
-      width: 100%;
-      margin-bottom: 20px;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-    }
+        .add-task-btn:active {
+            transform: scale(0.98);
+        }
 
-    .timer-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+        .timer-section, .task-section {
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+        }
 
-    .task-section {
-      display: flex;
-      flex-direction: column;
-    }
+        .timer-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    .timer-controls {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      margin-top: 20px;
-    }
+        .task-section {
+            display: flex;
+            flex-direction: column;
+        }
 
-    .timer-buttons {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-      margin-bottom: 20px;
-    }
+        .timer-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-top: 20px;
+        }
 
-    .timer-buttons button {
-      flex: 1;
-      margin: 0 10px;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      color: white;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
+        .timer-buttons {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
 
-    .timer-buttons .pomodoro { background-color: var(--pomodoro-color); }
-    .timer-buttons .short-break { background-color: var(--short-break-color); }
-    .timer-buttons .long-break { background-color: var(--long-break-color); }
+        .timer-buttons button {
+            flex: 1;
+            margin: 0 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-    .timer-buttons button:hover {
-      opacity: 0.8;
-    }
+        .timer-buttons .pomodoro {
+            background-color: var(--pomodoro-color);
+        }
 
-    .timer-control-buttons {
-      display: flex;
-      justify-content: center;
-      margin-top: 10px;
-    }
+        .timer-buttons .short-break {
+            background-color: var(--short-break-color);
+        }
 
+        .timer-buttons .long-break {
+            background-color: var(--long-break-color);
+        }
 
+        .timer-buttons button:hover {
+            opacity: 0.8;
+        }
 
-    .clock {
-      width: 450px;
-      height: 300px;
-      margin: 20px auto;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-size: 147px;
-      font-weight: bold;
-      color: #ffffff;
-      background-color: var(--timer-color);
-      border-radius: 10px;
-    }
+        .timer-control-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
 
-    .clock-face {
-      margin-bottom: 20px;
-    }
+        .clock {
+            width: 450px;
+            height: 300px;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 147px;
+            font-weight: bold;
+            color: #ffffff;
+            background-color: var(--timer-color);
+            border-radius: 10px;
+        }
 
-    .timer-control-buttons {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-    }
+        .clock-face {
+            margin-bottom: 20px;
+        }
 
-    .timer-control-buttons button {
-      flex: 1;
-      margin: 0 5px;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      background-color: rgba(255, 255, 255, 0.2);
-      color: white;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      backdrop-filter: blur(10px);
-    }
+        .timer-control-buttons {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
 
-    .timer-control-buttons button:hover {
-      background-color: rgba(255, 255, 255, 0.3);
-    }
+        .timer-control-buttons button {
+            flex: 1;
+            margin: 0 5px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            backdrop-filter: blur(10px);
+        }
 
+        .timer-control-buttons button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
 
-    select, input[type="text"], input[type="range"] {
-      width: 100%;
-      padding: 10px;
-      margin: 10px 0;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 5px;
-      font-size: 16px;
-      background-color: rgba(255, 255, 255, 0.1);
-      color: #ffffff;
-    }
+        select, input[type="text"], input[type="range"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
 
+        input[type="range"] {
+            padding: 0;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
 
+        input[type="range"]:hover {
+            opacity: 1;
+        }
 
-    input[type="range"] {
-      padding: 0;
-      -webkit-appearance: none;
-      appearance: none;
-      height: 10px;
-      background: rgba(255, 255, 255, 0.2);
-      outline: none;
-      opacity: 0.7;
-      transition: opacity .2s;
-    }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--timer-color);
+            cursor: pointer;
+            border-radius: 50%;
+        }
 
-    input[type="range"]:hover {
-      opacity: 1;
-    }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--timer-color);
+            cursor: pointer;
+            border-radius: 50%;
+        }
 
-    input[type="range"]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 20px;
-      height: 20px;
-      background: var(--timer-color);
-      cursor: pointer;
-      border-radius: 50%;
-    }
+        .task-section {
+            display: flex;
+            flex-direction: column;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 20px;
+        }
 
-    input[type="range"]::-moz-range-thumb {
-      width: 20px;
-      height: 20px;
-      background: var(--timer-color);
-      cursor: pointer;
-      border-radius: 50%;
-    }
+        .task-columns {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
 
-    .task-section {
-      display: flex;
-      flex-direction: column;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(10px);
-      border-radius: 10px;
-      padding: 20px;
-    }
+        .task-column {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10px;
+            min-height: 200px;
+            border-left: 5px solid transparent;
+        }
 
-    .task-columns {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-    }
+        .to-do {
+            border-left-color: var(--pomodoro-color);
+        }
 
-    .task-column {
-      flex: 1;
-      min-width: 200px;
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      margin-bottom: 10px;
-      min-height: 200px;
-      border-left: 5px solid transparent;
-    }
+        .in-progress {
+            border-left-color: var(--short-break-color);
+        }
 
-    .to-do { border-left-color: var(--pomodoro-color); }
-    .in-progress { border-left-color: var(--short-break-color); }
-    .done { border-left-color: var(--long-break-color); }
+        .done {
+            border-left-color: var(--long-break-color);
+        }
 
-    .task-list {
-      list-style-type: none;
-      padding: 0;
-      margin: 0;
-    }
+        .task-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
 
-    .task-list li {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background-color: rgba(255, 255, 255, 0.3);
-      padding: 10px 15px;
-      border-radius: 5px;
-      margin-bottom: 10px;
-      cursor: move;
-      transition: background-color 0.3s ease;
-    }
+        .task-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: rgba(255, 255, 255, 0.3);
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: move;
+            transition: background-color 0.3s ease;
+        }
 
-    .task-list li:hover {
-      background-color: rgba(255, 255, 255, 0.4);
-    }
+        .task-list li:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
 
-    .task-list li .task-buttons {
-      display: flex;
-      gap: 5px;
-    }
+        .task-list li .task-buttons {
+            display: flex;
+            gap: 5px;
+        }
 
-    .task-list li button {
-      background-color: rgba(255, 255, 255, 0.2);
-      border: none;
-      cursor: pointer;
-      font-size: 16px;
-      padding: 5px 10px;
-      border-radius: 3px;
-      color: #333;
-      transition: background-color 0.3s ease;
-    }
+        .task-list li button {
+            background-color: rgba(255, 255, 255, 0.2);
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px 10px;
+            border-radius: 3px;
+            color: #333;
+            transition: background-color 0.3s ease;
+        }
 
-    .task-list li button:hover {
-      background-color: rgba(255, 255, 255, 0.4);
-    }
+        .task-list li button:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+        }
 
-    .task-column h3 {
-      color: #fff;
-      margin-bottom: 15px;
-      font-size: 18px;
-      text-align: center;
-    }
+        .task-column h3 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 18px;
+            text-align: center;
+        }
 
-    #new-task {
-      width: calc(100% - 20px);
-      margin-bottom: 10px;
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      background-color: rgba(255, 255, 255, 0.2);
-      color: #fff;
-    }
+        #new-task {
+            width: calc(100% - 20px);
+            margin-bottom: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
 
-    #new-task::placeholder {
-      color: rgba(255, 255, 255, 0.7);
-    }
+        #new-task::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
 
-    .add-task-btn {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 20px;
-      font-size: 16px;
-    }
+        .add-task-btn {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
 
-    .music-section {
-      position: fixed;
-      bottom: 0;
-      right: 0;
-      width: 50px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      background: rgba(255, 255, 255, 0.2);
-      backdrop-filter: blur(10px);
-      padding: 10px;
-      border-radius: 10px 10px 0 0;
-      z-index: 1000;
-      transition: width 0.3s ease-in-out;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+        .music-section {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 50px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 10px;
+            border-radius: 10px 10px 0 0;
+            z-index: 1000;
+            transition: width 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    .music-section.expanded {
-      width: 300px;
-    }
+        .music-section.expanded {
+            width: 300px;
+        }
 
-    .music-section h2,
-    .music-section input[type="text"],
-    .music-section .music-embed {
-      display: none;
-      width: 100%;
-    }
+        .music-section h2,
+        .music-section input[type="text"],
+        .music-section .music-embed {
+            display: none;
+            width: 100%;
+        }
 
-    .music-section.expanded h2,
-    .music-section.expanded input[type="text"],
-    .music-section.expanded .music-embed {
-      display: block;
-      padding: 5px 0;
-    }
+        .music-section.expanded h2,
+        .music-section.expanded input[type="text"],
+        .music-section.expanded .music-embed {
+            display: block;
+            padding: 5px 0;
+        }
 
-    .music-section button.toggle-button {
-      width: 100%;
-      background-color: var(--timer-color);
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      padding: 5px;
-    }
+        .music-section button.toggle-button {
+            width: 100%;
+            background-color: var(--timer-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 5px;
+        }
 
-    .music-embed {
-      width: 100%;
-      height: 100px;
-    }
-    @media (max-width: 768px) {
-      .task-columns {
-        flex-direction: column;
-      }
+        .cycle-indicator {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: white;
+        }
 
-      .task-column {
-        width: 100%;
-      }
+        .clear-all-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            z-index: 999;
+        }
 
-      .clock {
-        width: 100%;
-        height: auto;
-        font-size: 100px;
-      }
+        .clear-all-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
 
-      .timer-buttons, .timer-control-buttons {
-        flex-direction: column;
-      }
+        .corner-container {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            text-align: left;
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+        }
 
-      .timer-buttons button, .timer-control-buttons button {
-        margin: 5px 0;
-      }
-    }
-  </style>
+        .corner-container a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #f8f9fa;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            font-family: Arial, sans-serif;
+        }
+
+        .footer a {
+            color: #007bff;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer img {
+            height: 24px;
+            vertical-align: middle;
+            margin: 0 5px;
+        }
+
+        .footer .icons {
+            margin-top: 5px;
+        }
+
+        .corner-container a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .task-columns {
+                flex-direction: column;
+            }
+
+            .task-column {
+                width: 100%;
+            }
+
+            /*.clock {*/
+            /*  width: 100%;*/
+            /*  height: auto;*/
+            /*  font-size: 100px;*/
+            /*}*/
+            .timer-buttons, .timer-control-buttons {
+                flex-direction: column;
+            }
+
+            .timer-buttons button, .timer-control-buttons button {
+                margin: 5px 0;
+            }
+        }
+    </style>
+    <style>
+
+    </style>
+  <link rel="icon" href="./tomato.png" type="image/png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
 
-<!--<h1>Pomodoro Task Manager</h1>-->
 <div class="main-container">
-  <div class="timer-section">
-    <div class="timer-controls">
-      <div class="timer-buttons">
-        <button class="pomodoro" onclick="setTimerType('pomodoro')">Pomodoro</button>
-        <button class="short-break" onclick="setTimerType('short-break')">Short Break</button>
-        <button class="long-break" onclick="setTimerType('long-break')">Long Break</button>
-      </div>
-    </div>
-    <div class="clock-container">
-      <div class="clock">
-        <div class="clock-face"></div>
-        <div class="timer-control-buttons">
-          <button onclick="startTimer()"><i class="fas fa-play"></i></button>
-          <button onclick="pauseTimer()"><i class="fas fa-pause"></i></button>
-          <button onclick="resetTimer()"><i class="fas fa-undo"></i></button>
-          <button onclick="finishPomodoro()"><i class="fas fa-check"></i></button>
+
+    <div class="timer-section">
+        <button class="clear-all-btn" onclick="clearAllTasks()">Clear All</button>
+        <div class="cycle-indicator" id="cycle-indicator"></div>
+        <div class="timer-controls">
+            <div class="timer-buttons">
+                <button class="pomodoro" onclick="setTimerType('pomodoro')">Pomodoro</button>
+                <button class="short-break" onclick="setTimerType('short-break')">Short Break</button>
+                <button class="long-break" onclick="setTimerType('long-break')">Long Break</button>
+            </div>
         </div>
-      </div>
-      <input type="range" id="duration-slider" min="1" max="60" value="25" oninput="updateDuration()">
+        <div class="clock-container">
+            <div class="clock">
+                <div class="clock-face"></div>
+                <div class="timer-control-buttons">
+                    <button onclick="startTimer()"><i class="fas fa-play"></i></button>
+                    <button onclick="pauseTimer()"><i class="fas fa-pause"></i></button>
+                    <button onclick="resetTimer()"><i class="fas fa-undo"></i></button>
+                    <button onclick="finishPomodoro()"><i class="fas fa-check"></i></button>
+                </div>
+            </div>
+            <input type="range" id="duration-slider" min="1" max="60" value="25" oninput="updateDuration()">
+        </div>
 
+        <div class="add-task-container">
+            <input type="text" id="new-task" placeholder="Enter new task">
+            <button class="add-task-btn" onclick="addTask()">Add Task</button>
+        </div>
     </div>
-
-    <div class="add-task-container">
-      <input type="text" id="new-task" placeholder="Enter new task">
-      <button class="add-task-btn" onclick="addTask()">Add Task</button>
+    <div class="task-section glassmorphic">
+        <div class="task-columns">
+            <div class="task-column to-do" id="todo-column">
+                <h3>To Do</h3>
+                <ul id="todo-list" class="task-list"></ul>
+            </div>
+            <div class="task-column in-progress" id="inprogress-column">
+                <h3>In Progress</h3>
+                <ul id="inprogress-list" class="task-list"></ul>
+            </div>
+            <div class="task-column done" id="done-column">
+                <h3>Done</h3>
+                <ul id="done-list" class="task-list"></ul>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="task-section glassmorphic">
-    <div class="task-columns">
-      <div class="task-column to-do" id="todo-column">
-        <h3>To Do</h3>
-        <ul id="todo-list" class="task-list"></ul>
-      </div>
-      <div class="task-column in-progress" id="inprogress-column">
-        <h3>In Progress</h3>
-        <ul id="inprogress-list" class="task-list"></ul>
-      </div>
-      <div class="task-column done" id="done-column">
-        <h3>Done</h3>
-        <ul id="done-list" class="task-list"></ul>
-      </div>
-    </div>
-  </div>
 </div>
 
 <div class="music-section" id="music-section">
-  <button class="toggle-button" onclick="toggleMusicSection()">🎵</button>
-  <h2>Music</h2>
-  <input type="text" id="music-link" placeholder=" Paste Spotify or YouTube link here" onchange="changeMusic()">
-  <div id="music-embed" class="music-embed"></div>
+    <button class="toggle-button" onclick="toggleMusicSection()">🎵</button>
+    <input type="text" id="music-link" placeholder="Paste Spotify or YouTube link here" onchange="changeMusic()">
+    <div id="music-embed" class="music-embed"></div>
+</div>
+<div class="corner-container">
+    <script data-name="BMC-Widget" data-cfasync="false" src="https://cdnjs.buymeacoffee.com/1.0.0/widget.prod.min.js"
+            data-id="pvhuwung" data-description="Support me on Buy me a coffee!"
+            data-message="Thank you! You made little David day." data-color="#FFDD02" data-position="left"
+            data-x_margin="11" data-y_margin="11"></script>
 </div>
 
 <script>
-  let tasks = [];
-  let timer;
-  let duration = 25 * 60;
-  let remainingTime = duration;
-  let isTimerRunning = false;
-  let currentTimerType = 'pomodoro';
+    let tasks = [];
+    let timer;
+    let duration = 25 * 60;
+    let remainingTime = duration;
+    let isTimerRunning = false;
+    let currentTimerType = 'pomodoro';
+    let cycleStage = 0;
+    const defaultCycle = ['pomodoro', 'short-break', 'pomodoro', 'short-break', 'pomodoro', 'short-break', 'pomodoro', 'long-break'];
 
-  function addTask(taskText = null, completed = false, isInProgress = false) {
-    const taskInput = document.getElementById('new-task');
-    if (!taskText) {
-      taskText = taskInput.value;
-      if (taskText === '') return;
+    function loadFromLocalStorage() {
+        const savedTasks = localStorage.getItem('tasks');
+        if (savedTasks) {
+            tasks = JSON.parse(savedTasks);
+            renderTasks();
+        }
+
+        const savedTimerState = localStorage.getItem('timerState');
+        if (savedTimerState) {
+            const timerState = JSON.parse(savedTimerState);
+            currentTimerType = timerState.currentTimerType;
+            cycleStage = timerState.cycleStage;
+            remainingTime = timerState.remainingTime;
+            duration = timerState.duration;
+            setTimerType(currentTimerType);
+            updateClock();
+        }
     }
 
-    const taskList = isInProgress ? document.getElementById('inprogress-list') :
+    function renderTasks() {
+        document.getElementById('todo-list').innerHTML = '';
+        document.getElementById('inprogress-list').innerHTML = '';
+        document.getElementById('done-list').innerHTML = '';
+
+        tasks.forEach(task => {
+            addTask(task.text, task.completed, task.isInProgress);
+        });
+    }
+
+    function saveToLocalStorage() {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        localStorage.setItem('timerState', JSON.stringify({
+            currentTimerType,
+            cycleStage,
+            remainingTime,
+            duration
+        }));
+    }
+
+    // Add a new task to the list
+    function addTask(taskText = null, completed = false, isInProgress = false) {
+        const taskInput = document.getElementById('new-task');
+        if (!taskText) {
+            taskText = taskInput.value;
+            if (taskText === '' || tasks.some(task => task.text === taskText)) return;
+        }
+
+        const taskList = isInProgress ? document.getElementById('inprogress-list') :
             completed ? document.getElementById('done-list') :
-                    document.getElementById('todo-list');
-    const listItem = document.createElement('li');
-    listItem.id = 'task-' + Date.now();
-    listItem.className = completed ? 'completed' : isInProgress ? 'in-progress' : '';
-    listItem.draggable = true;
+                document.getElementById('todo-list');
+        const listItem = document.createElement('li');
+        listItem.id = 'task-' + Date.now();
+        listItem.className = completed ? 'completed' : isInProgress ? 'in-progress' : '';
+        listItem.draggable = true;
 
-    const taskContent = document.createElement('span');
-    taskContent.textContent = taskText;
-    listItem.appendChild(taskContent);
+        const taskContent = document.createElement('span');
+        taskContent.textContent = taskText;
+        listItem.appendChild(taskContent);
 
-    const buttonContainer = document.createElement('div');
-    buttonContainer.className = 'task-buttons';
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'task-buttons';
 
-    if (isInProgress || completed) {
-      const backButton = document.createElement('button');
-      buttonContainer.appendChild(backButton);
-      backButton.innerHTML = '&#10094;'; // Left arrow
-      backButton.onclick = function() {
-        moveTask(listItem, 'back');
-      };
+        if (isInProgress || completed) {
+            const backButton = document.createElement('button');
+            buttonContainer.appendChild(backButton);
+            backButton.innerHTML = '&#10094;'; // Left arrow
+            backButton.onclick = function () {
+                moveTask(listItem, 'back');
+            };
+        }
+
+        if (!completed) {
+            const forwardButton = document.createElement('button');
+            forwardButton.innerHTML = '&#10095;'; // Right arrow
+            forwardButton.onclick = function () {
+                moveTask(listItem, 'forward');
+            };
+            buttonContainer.appendChild(forwardButton);
+        }
+
+        const removeButton = document.createElement('button');
+        removeButton.innerHTML = '&#10005;'; // X mark
+        removeButton.onclick = function () {
+            listItem.remove();
+            tasks = tasks.filter(t => t.text !== taskText);
+            saveToLocalStorage();
+        };
+        buttonContainer.appendChild(removeButton);
+
+        listItem.appendChild(buttonContainer);
+        taskList.appendChild(listItem);
+
+        taskInput.value = '';
+        tasks.push({text: taskText, completed, isInProgress});
+
+        listItem.addEventListener('dragstart', handleDragStart);
+        listItem.addEventListener('dragend', handleDragEnd);
+
+        saveToLocalStorage();
     }
 
-    if (!completed) {
-      const forwardButton = document.createElement('button');
-      forwardButton.innerHTML = '&#10095;'; // Right arrow
-      forwardButton.onclick = function() {
-        moveTask(listItem, 'forward');
-      };
-      buttonContainer.appendChild(forwardButton);
+    // Move a task to a different list
+    function moveTask(taskElement, direction) {
+        const currentList = taskElement.parentElement;
+        let targetList;
+
+        if (direction === 'forward') {
+            if (currentList.id === 'todo-list') {
+                targetList = document.getElementById('inprogress-list');
+            } else if (currentList.id === 'inprogress-list') {
+                targetList = document.getElementById('done-list');
+            }
+        } else if (direction === 'back') {
+            if (currentList.id === 'inprogress-list') {
+                targetList = document.getElementById('todo-list');
+            } else if (currentList.id === 'done-list') {
+                targetList = document.getElementById('inprogress-list');
+            }
+        }
+
+        if (targetList) {
+            targetList.appendChild(taskElement);
+            updateTaskStatus(taskElement, targetList.id);
+        }
     }
 
+    function updateTaskStatus(taskElement, listId) {
+        const taskText = taskElement.querySelector('span').textContent;
+        const taskIndex = tasks.findIndex(t => t.text === taskText);
 
+        if (taskIndex !== -1) {
+            tasks[taskIndex].completed = listId === 'done-list';
+            tasks[taskIndex].isInProgress = listId === 'inprogress-list';
+        }
 
-    const removeButton = document.createElement('button');
-    removeButton.innerHTML = '&#10005;'; // X mark
-    removeButton.onclick = function() {
-      listItem.remove();
-      tasks = tasks.filter(t => t.text !== taskText);
+        const buttonContainer = taskElement.querySelector('.task-buttons');
+        buttonContainer.innerHTML = '';
+
+        if (listId !== 'todo-list') {
+            const backButton = document.createElement('button');
+            backButton.innerHTML = '&#10094;'; // Left arrow
+            backButton.onclick = function () {
+                moveTask(taskElement, 'back');
+            };
+            buttonContainer.appendChild(backButton);
+        }
+
+        if (listId !== 'done-list') {
+            const forwardButton = document.createElement('button');
+            forwardButton.innerHTML = '&#10095;'; // Right arrow
+            forwardButton.onclick = function () {
+                moveTask(taskElement, 'forward');
+            };
+            buttonContainer.appendChild(forwardButton);
+        }
+
+        const removeButton = document.createElement('button');
+        removeButton.innerHTML = '&#10005;'; // X mark
+        removeButton.onclick = function () {
+            taskElement.remove();
+            tasks = tasks.filter(t => t.text !== taskText);
+            saveToLocalStorage();
+        };
+        buttonContainer.appendChild(removeButton);
+
+        saveToLocalStorage();
+    }
+
+    // Set the timer type and adjust duration
+    function setTimerType(type) {
+        currentTimerType = type;
+        switch (type) {
+            case 'pomodoro':
+                duration = 25 * 60;
+                document.documentElement.style.setProperty('--timer-color', 'var(--pomodoro-color)');
+                break;
+            case 'short-break':
+                duration = 5 * 60;
+                document.documentElement.style.setProperty('--timer-color', 'var(--short-break-color)');
+                break;
+            case 'long-break':
+                duration = 15 * 60;
+                document.documentElement.style.setProperty('--timer-color', 'var(--long-break-color)');
+                break;
+        }
+        document.body.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--timer-color');
+        remainingTime = duration;
+        updateClock();
+
+        cycleStage = findNearestStage(type);
+
+        updateCycleIndicator();
+        saveToLocalStorage();
+    }
+
+    function findNearestStage(type) {
+        const currentIndex = cycleStage % defaultCycle.length;
+        let nearestIndex = currentIndex;
+        let minDistance = defaultCycle.length;
+
+        for (let i = 0; i < defaultCycle.length; i++) {
+            if (defaultCycle[i] === type) {
+                const distance = Math.min(
+                    Math.abs(i - currentIndex),
+                    defaultCycle.length - Math.abs(i - currentIndex)
+                );
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestIndex = i;
+                }
+            }
+        }
+
+        return nearestIndex;
+    }
+
+    function finishPomodoro() {
+        cycleStage = (cycleStage + 1) % defaultCycle.length;
+        setTimerType(defaultCycle[cycleStage]);
+        resetTimer();
+        updateCycleIndicator();
+        saveToLocalStorage();
+    }
+
+    // Update the cycle indicator text
+    function updateCycleIndicator() {
+        const indicator = document.getElementById('cycle-indicator');
+        const currentStage = cycleStage % defaultCycle.length;
+        const stageNames = {
+            'pomodoro': 'Pomodoro',
+            'short-break': 'Short Break',
+            'long-break': 'Long Break'
+        };
+        indicator.textContent = `Stage ${currentStage + 1}/${defaultCycle.length}: ${stageNames[currentTimerType]}`;
+    }
+
+    // Start the timer
+    function startTimer() {
+        if (isTimerRunning) return;
+        isTimerRunning = true;
+        timer = setInterval(updateTimer, 1000);
+        saveToLocalStorage();
+    }
+
+    // Pause the timer
+    function pauseTimer() {
+        clearInterval(timer);
+        isTimerRunning = false;
+        saveToLocalStorage();
+    }
+
+    // Reset the timer
+    function resetTimer() {
+        clearInterval(timer);
+        isTimerRunning = false;
+        remainingTime = duration;
+        updateClock();
+        saveToLocalStorage();
+    }
+
+    // Finish the current session and move to the next stage
+    function finishSession() {
+        cycleStage = (cycleStage + 1) % defaultCycle.length;
+        setTimerType(defaultCycle[cycleStage]);
+        resetTimer();
+        startTimer(); // Automatically start the next stage
+    }
+
+    // Update the timer
+    function updateTimer() {
+        remainingTime--;
+        if (remainingTime <= 0) {
+            finishSession();
+            return;
+        }
+        updateClock();
+        saveToLocalStorage();
+    }
+
+    // Update the clock display
+    function updateClock() {
+        const minutes = Math.floor(remainingTime / 60);
+        const seconds = remainingTime % 60;
+        document.querySelector('.clock-face').textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+
+        const progress = ((duration - remainingTime) / duration) * 360;
+        document.documentElement.style.setProperty('--progress', `${progress}deg`);
+    }
+
+    function updateDuration() {
+        duration = document.getElementById('duration-slider').value * 60;
+        remainingTime = duration;
+        updateClock();
+        saveToLocalStorage();
+    }
+
+    function handleDragStart(e) {
+        e.dataTransfer.setData('text/plain', e.target.id);
+        e.target.classList.add('dragging');
+    }
+
+    function handleDragEnd(e) {
+        e.target.classList.remove('dragging');
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        const taskId = e.dataTransfer.getData('text');
+        const taskElement = document.getElementById(taskId);
+
+        if (e.target.classList.contains('task-column')) {
+            e.target.querySelector('.task-list').appendChild(taskElement);
+        } else if (e.target.classList.contains('task-list')) {
+            e.target.appendChild(taskElement);
+        } else if (e.target.closest('.task-column')) {
+            e.target.closest('.task-column').querySelector('.task-list').appendChild(taskElement);
+        }
+
+        updateTaskStatus(taskElement, taskElement.closest('.task-column').id);
+    }
+
+    // Change music link
+    function changeMusic() {
+        const musicLink = document.getElementById('music-link').value;
+        const embedContainer = document.getElementById('music-embed');
+        embedContainer.innerHTML = '';
+
+        if (musicLink.includes('spotify')) {
+            const embedUrl = musicLink.replace('https://open.spotify.com/', 'https://open.spotify.com/embed/');
+            const iframe = document.createElement('iframe');
+            iframe.src = embedUrl;
+            iframe.width = '300';
+            iframe.height = '380';
+            iframe.frameBorder = '0';
+            iframe.allow = 'encrypted-media';
+            embedContainer.appendChild(iframe);
+        } else if (musicLink.includes('youtube')) {
+            const embedUrl = musicLink.replace('https://www.youtube.com/watch?v=', 'https://www.youtube.com/embed/');
+            const iframe = document.createElement('iframe');
+            iframe.src = embedUrl;
+            iframe.width = '300';
+            iframe.height = '200';
+            iframe.frameBorder = '0';
+            iframe.allow = 'autoplay; encrypted-media';
+            embedContainer.appendChild(iframe);
+        }
+    }
+
+    function toggleMusicSection() {
+        const musicSection = document.getElementById('music-section');
+        musicSection.classList.toggle('expanded');
+    }
+
+    function clearAllTasks() {
+        document.getElementById('todo-list').innerHTML = '';
+        document.getElementById('inprogress-list').innerHTML = '';
+        document.getElementById('done-list').innerHTML = '';
+        tasks = [];
+        saveToLocalStorage();
+    }
+
+    window.onload = function () {
+        loadFromLocalStorage();
+        updateCycleIndicator();
+
+        const taskColumns = document.querySelectorAll('.task-column');
+        taskColumns.forEach(column => {
+            column.addEventListener('dragover', handleDragOver);
+            column.addEventListener('drop', handleDrop);
+        });
     };
-    buttonContainer.appendChild(removeButton);
-
-    listItem.appendChild(buttonContainer);
-    taskList.appendChild(listItem);
-
-    taskInput.value = '';
-    tasks.push({ text: taskText, completed, isInProgress });
-
-    listItem.addEventListener('dragstart', handleDragStart);
-    listItem.addEventListener('dragend', handleDragEnd);
-  }
-
-  function moveTask(taskElement, direction) {
-    const currentList = taskElement.parentElement;
-    let targetList;
-
-    if (direction === 'forward') {
-      if (currentList.id === 'todo-list') {
-        targetList = document.getElementById('inprogress-list');
-      } else if (currentList.id === 'inprogress-list') {
-        targetList = document.getElementById('done-list');
-      }
-    } else if (direction === 'back') {
-      if (currentList.id === 'inprogress-list') {
-        targetList = document.getElementById('todo-list');
-      } else if (currentList.id === 'done-list') {
-        targetList = document.getElementById('inprogress-list');
-      }
-    }
-
-    if (targetList) {
-      targetList.appendChild(taskElement);
-      updateTaskStatus(taskElement, targetList.id);
-    }
-  }
-
-  function updateTaskStatus(taskElement, listId) {
-    const taskText = taskElement.querySelector('span').textContent;
-    const taskIndex = tasks.findIndex(t => t.text === taskText);
-
-    if (taskIndex !== -1) {
-      tasks[taskIndex].completed = listId === 'done-list';
-      tasks[taskIndex].isInProgress = listId === 'inprogress-list';
-    }
-
-    // Update task buttons
-    const buttonContainer = taskElement.querySelector('.task-buttons');
-    buttonContainer.innerHTML = '';
-
-
-    if (listId !== 'todo-list') {
-      const backButton = document.createElement('button');
-      backButton.innerHTML = '&#10094;'; // Left arrow
-      backButton.onclick = function() {
-        moveTask(taskElement, 'back');
-      };
-      buttonContainer.appendChild(backButton);
-    }
-
-    if (listId !== 'done-list') {
-      const forwardButton = document.createElement('button');
-      forwardButton.innerHTML = '&#10095;'; // Right arrow
-      forwardButton.onclick = function() {
-        moveTask(taskElement, 'forward');
-      };
-      buttonContainer.appendChild(forwardButton);
-    }
-
-    const removeButton = document.createElement('button');
-    removeButton.innerHTML = '&#10005;'; // X mark
-    removeButton.onclick = function() {
-      taskElement.remove();
-      tasks = tasks.filter(t => t.text !== taskText);
-    };
-    buttonContainer.appendChild(removeButton);
-  }
-
-  function setTimerType(type) {
-    timerType = type;
-    currentTimerType = type;
-    switch (type) {
-      case 'pomodoro':
-        duration = 25 * 60;
-        document.documentElement.style.setProperty('--timer-color', 'var(--pomodoro-color)');
-        break;
-      case 'short-break':
-        duration = 5 * 60;
-        document.documentElement.style.setProperty('--timer-color', 'var(--short-break-color)');
-        break;
-      case 'long-break':
-        duration = 15 * 60;
-        document.documentElement.style.setProperty('--timer-color', 'var(--long-break-color)');
-        break;
-    }
-    let color;
-    if (type === 'pomodoro') {
-      color = getComputedStyle(document.documentElement).getPropertyValue('--pomodoro-color');
-    } else if (type === 'short-break') {
-      color = getComputedStyle(document.documentElement).getPropertyValue('--short-break-color');
-    } else if (type === 'long-break') {
-      color = getComputedStyle(document.documentElement).getPropertyValue('--long-break-color');
-    }
-    document.documentElement.style.setProperty('--timer-color', color);
-    document.body.style.backgroundColor = color;
-    remainingTime = duration;
-    updateClock();
-  }
-  function updateDuration() {
-    const slider = document.getElementById('duration-slider');
-    duration = slider.value * 60;
-    remainingTime = duration;
-    updateClock();
-  }
-
-  // Add this event listener after the function
-  document.getElementById('duration-slider').addEventListener('input', updateDuration);
-
-  function startTimer() {
-    if (isTimerRunning) return;
-    isTimerRunning = true;
-    timer = setInterval(updateTimer, 1000);
-  }
-
-  function pauseTimer() {
-    clearInterval(timer);
-    isTimerRunning = false;
-  }
-
-  function resetTimer() {
-    clearInterval(timer);
-    isTimerRunning = false;
-    remainingTime = duration;
-    updateClock();
-  }
-
-  function finishPomodoro() {
-    if (currentTimerType === 'pomodoro') {
-      alert('Pomodoro session completed!');
-    }
-    resetTimer();
-  }
-
-  function updateTimer() {
-    remainingTime--;
-    if (remainingTime <= 0) {
-      finishPomodoro();
-      return;
-    }
-    updateClock();
-  }
-
-  function updateClock() {
-    const minutes = Math.floor(remainingTime / 60);
-    const seconds = remainingTime % 60;
-    document.querySelector('.clock-face').textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-    const progress = ((duration - remainingTime) / duration) * 360;
-    document.documentElement.style.setProperty('--progress', `${progress}deg`);
-  }
-
-  function toggleMusicSection() {
-    const musicSection = document.getElementById('music-section');
-    musicSection.classList.toggle('expanded');
-  }
-
-  function changeMusic() {
-    const musicLink = document.getElementById('music-link').value;
-    const musicEmbed = document.getElementById('music-embed');
-
-    if (musicLink.includes('spotify')) {
-      const spotifyEmbed = `<iframe src="https://open.spotify.com/embed?uri=${musicLink}" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe>`;
-      musicEmbed.innerHTML = spotifyEmbed;
-    } else if (musicLink.includes('youtube')) {
-      const url = new URL(musicLink);
-      const videoId = url.searchParams.get('v') || url.pathname.split('/').pop();
-      const youtubeEmbed = `<iframe width="100%" height="100" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-      musicEmbed.innerHTML = youtubeEmbed;
-    } else {
-      musicEmbed.innerHTML = '';
-    }
-  }
-
-
-  document.addEventListener('click', function (event) {
-    const musicSection = document.getElementById('music-section');
-    const isClickInside = musicSection.contains(event.target);
-
-    if (!isClickInside) {
-      musicSection.classList.remove('expanded');
-    }
-  });
-
-  function handleDragStart(e) {
-    e.dataTransfer.setData('text/plain', e.target.id);
-    e.target.classList.add('dragging');
-  }
-
-  function handleDragEnd(e) {
-    e.target.classList.remove('dragging');
-  }
-
-  function handleDrop(e) {
-    e.preventDefault();
-    const id = e.dataTransfer.getData('text/plain');
-    const draggedElement = document.getElementById(id);
-    if (e.target.classList.contains('task-column') || e.target.closest('.task-column')) {
-      const taskList = e.target.querySelector('.task-list') || e.target.closest('.task-list');
-      taskList.appendChild(draggedElement);
-      updateTaskStatus(draggedElement, taskList.id);
-    }
-  }
-
-  function handleDragOver(e) {
-    e.preventDefault();
-  }
-
-  function makeTaskDraggable() {
-    const taskColumns = document.querySelectorAll('.task-column');
-    taskColumns.forEach(column => {
-      column.addEventListener('dragover', handleDragOver);
-      column.addEventListener('drop', handleDrop);
-    });
-  }
-
-  // Initialize drag and drop
-  makeTaskDraggable();
-
-  // Initial clock update
-  updateClock();
-
 </script>
 </body>
 </html>
