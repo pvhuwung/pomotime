@@ -916,6 +916,14 @@
             column.addEventListener('drop', handleDrop);
         });
     };
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      if (remainingTime === undefined || remainingTime === null) {
+        remainingTime = 25 * 60;
+      }
+      updateClock();
+    });
+
 </script>
 </body>
 </html>
