@@ -146,7 +146,10 @@
         .timer-control-buttons {
             display: flex;
             justify-content: center;
-            width: 100%;
+            width: 90%;
+            gap: 5px;
+            margin-left: 10px;
+            margin-right: 10px;
         }
 
         .timer-control-buttons button {
@@ -440,34 +443,105 @@
             text-decoration: underline;
         }
 
+        /* Mobile View Adjustments */
         @media (max-width: 768px) {
-            .task-columns {
-                flex-direction: column;
+            body {
+                padding: 10px;
             }
 
-            .task-column {
+            .main-container {
+                padding: 10px;
+            }
+
+            .clock {
                 width: 100%;
+                height: auto;
+                font-size: 80px;
+                text-align: center;
+                align-content: center;
             }
 
-            /*.clock {*/
-            /*  width: 100%;*/
-            /*  height: auto;*/
-            /*  font-size: 100px;*/
-            /*}*/
-            .timer-buttons, .timer-control-buttons {
+            .clock-face {
+                padding: 40px;
+            }
+
+            .timer-controls {
                 flex-direction: column;
+                align-items: stretch;
+            }
+
+            .timer-buttons {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                gap: 10px;
             }
 
             .timer-buttons button, .timer-control-buttons button {
                 margin: 5px 0;
+                flex: 1 1 calc(33.33% - 10px);
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .task-container {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .task-columns {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                width: 100%;
+            }
+
+            .task-column {
+                width: 100%;
+                min-height: 150px;
+                padding: 10px;
+                box-sizing: border-box;
+                display: flex;
+                flex-direction: column;
+                border-radius: 5px;
+            }
+
+            /*.add-task-btn {*/
+            /*  margin: 20px 0;*/
+            /*  padding: 10px 20px;*/
+            /*  font-size: 16px;*/
+            /*  text-align: center;*/
+            /*  color: white;*/
+            /*  border: none;*/
+            /*  border-radius: 5px;*/
+            /*  cursor: pointer;*/
+            /*}*/
+            .footer {
+                padding: 10px;
+                font-size: 12px;
+            }
+
+            .footer img {
+                height: 20px;
+                margin: 0 3px;
+            }
+
+            .clear-all-btn {
+                position: static;
+                margin: 10px 0;
+                display: block;
+                width: 100%;
             }
         }
+
     </style>
     <style>
 
     </style>
-  <link rel="icon" href="./tomato.png" type="image/png">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="icon" href="./tomato.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
 
@@ -916,12 +990,11 @@
             column.addEventListener('drop', handleDrop);
         });
     };
-    
     document.addEventListener('DOMContentLoaded', () => {
-      if (remainingTime === undefined || remainingTime === null) {
-        remainingTime = 25 * 60;
-      }
-      updateClock();
+        if (remainingTime === undefined || remainingTime === null) {
+            remainingTime = 25 * 60;
+        }
+        updateClock();
     });
 
 </script>
