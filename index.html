@@ -606,395 +606,292 @@
 </div>
 
 <script>
-    let tasks = [];
-    let timer;
-    let duration = 25 * 60;
-    let remainingTime = duration;
-    let isTimerRunning = false;
-    let currentTimerType = 'pomodoro';
-    let cycleStage = 0;
-    const defaultCycle = ['pomodoro', 'short-break', 'pomodoro', 'short-break', 'pomodoro', 'short-break', 'pomodoro', 'long-break'];
+    const _0x315fd5 = _0x503d;
+    (function (_0x580c32, _0x5bdd2e) {
+        const _0x17028f = _0x503d, _0x347951 = _0x580c32();
+        while (!![]) {
+            try {
+                const _0x28e203 = parseInt(_0x17028f(0x166)) / 0x1 * (parseInt(_0x17028f(0x12e)) / 0x2) + parseInt(_0x17028f(0x171)) / 0x3 * (-parseInt(_0x17028f(0x147)) / 0x4) + -parseInt(_0x17028f(0x151)) / 0x5 * (-parseInt(_0x17028f(0x178)) / 0x6) + parseInt(_0x17028f(0x173)) / 0x7 * (parseInt(_0x17028f(0x174)) / 0x8) + -parseInt(_0x17028f(0x12b)) / 0x9 * (-parseInt(_0x17028f(0x195)) / 0xa) + -parseInt(_0x17028f(0x16b)) / 0xb * (parseInt(_0x17028f(0x141)) / 0xc) + parseInt(_0x17028f(0x19b)) / 0xd;
+                if (_0x28e203 === _0x5bdd2e) break; else _0x347951['push'](_0x347951['shift']());
+            } catch (_0x3c15d0) {
+                _0x347951['push'](_0x347951['shift']());
+            }
+        }
+    }(_0x5149, 0x5d3aa));
+    let tasks = [], timer, duration = 0x19 * 0x3c, remainingTime = duration, isTimerRunning = ![],
+        currentTimerType = _0x315fd5(0x130), cycleStage = 0x0;
+    const defaultCycle = ['pomodoro', _0x315fd5(0x157), _0x315fd5(0x130), _0x315fd5(0x157), _0x315fd5(0x130), _0x315fd5(0x157), _0x315fd5(0x130), _0x315fd5(0x1a0)];
+
+    function _0x503d(_0x44e5f0, _0x4c7a45) {
+        const _0x5149f1 = _0x5149();
+        return _0x503d = function (_0x503dc0, _0x393c6f) {
+            _0x503dc0 = _0x503dc0 - 0x12a;
+            let _0x5c7890 = _0x5149f1[_0x503dc0];
+            return _0x5c7890;
+        }, _0x503d(_0x44e5f0, _0x4c7a45);
+    }
 
     function loadFromLocalStorage() {
-        const savedTasks = localStorage.getItem('tasks');
-        if (savedTasks) {
-            tasks = JSON.parse(savedTasks);
-            renderTasks();
-        }
-
-        const savedTimerState = localStorage.getItem('timerState');
-        if (savedTimerState) {
-            const timerState = JSON.parse(savedTimerState);
-            currentTimerType = timerState.currentTimerType;
-            cycleStage = timerState.cycleStage;
-            remainingTime = timerState.remainingTime;
-            duration = timerState.duration;
-            setTimerType(currentTimerType);
-            updateClock();
+        const _0x3aa50b = _0x315fd5, _0x45aef2 = localStorage[_0x3aa50b(0x135)](_0x3aa50b(0x192));
+        _0x45aef2 && (tasks = JSON[_0x3aa50b(0x13e)](_0x45aef2), renderTasks());
+        const _0x287684 = localStorage[_0x3aa50b(0x135)](_0x3aa50b(0x12d));
+        if (_0x287684) {
+            const _0x1efe1f = JSON[_0x3aa50b(0x13e)](_0x287684);
+            currentTimerType = _0x1efe1f[_0x3aa50b(0x161)], cycleStage = _0x1efe1f['cycleStage'], remainingTime = _0x1efe1f[_0x3aa50b(0x146)], duration = _0x1efe1f[_0x3aa50b(0x12a)], setTimerType(currentTimerType), updateClock();
         }
     }
 
     function renderTasks() {
-        document.getElementById('todo-list').innerHTML = '';
-        document.getElementById('inprogress-list').innerHTML = '';
-        document.getElementById('done-list').innerHTML = '';
-
-        tasks.forEach(task => {
-            addTask(task.text, task.completed, task.isInProgress);
+        const _0x186c9c = _0x315fd5;
+        document[_0x186c9c(0x191)](_0x186c9c(0x13f))[_0x186c9c(0x16c)] = '', document[_0x186c9c(0x191)]('inprogress-list')['innerHTML'] = '', document[_0x186c9c(0x191)]('done-list')[_0x186c9c(0x16c)] = '', tasks[_0x186c9c(0x16f)](_0x86f85c => {
+            const _0x526e3b = _0x186c9c;
+            addTask(_0x86f85c[_0x526e3b(0x131)], _0x86f85c[_0x526e3b(0x132)], _0x86f85c[_0x526e3b(0x189)]);
         });
     }
 
     function saveToLocalStorage() {
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-        localStorage.setItem('timerState', JSON.stringify({
-            currentTimerType,
-            cycleStage,
-            remainingTime,
-            duration
+        const _0x5ba752 = _0x315fd5;
+        localStorage['setItem']('tasks', JSON[_0x5ba752(0x14f)](tasks)), localStorage[_0x5ba752(0x134)](_0x5ba752(0x12d), JSON[_0x5ba752(0x14f)]({
+            'currentTimerType': currentTimerType,
+            'cycleStage': cycleStage,
+            'remainingTime': remainingTime,
+            'duration': duration
         }));
     }
 
-    // Add a new task to the list
-    function addTask(taskText = null, completed = false, isInProgress = false) {
-        const taskInput = document.getElementById('new-task');
-        if (!taskText) {
-            taskText = taskInput.value;
-            if (taskText === '' || tasks.some(task => task.text === taskText)) return;
+    function addTask(_0x1b6739 = null, _0x483f1a = ![], _0x4ab74a = ![]) {
+        const _0x1d9670 = _0x315fd5, _0x59b9be = document[_0x1d9670(0x191)](_0x1d9670(0x140));
+        if (!_0x1b6739) {
+            _0x1b6739 = _0x59b9be[_0x1d9670(0x165)];
+            if (_0x1b6739 === '' || tasks['some'](_0x4e3250 => _0x4e3250[_0x1d9670(0x131)] === _0x1b6739)) return;
         }
-
-        const taskList = isInProgress ? document.getElementById('inprogress-list') :
-            completed ? document.getElementById('done-list') :
-                document.getElementById('todo-list');
-        const listItem = document.createElement('li');
-        listItem.id = 'task-' + Date.now();
-        listItem.className = completed ? 'completed' : isInProgress ? 'in-progress' : '';
-        listItem.draggable = true;
-
-        const taskContent = document.createElement('span');
-        taskContent.textContent = taskText;
-        listItem.appendChild(taskContent);
-
-        const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'task-buttons';
-
-        if (isInProgress || completed) {
-            const backButton = document.createElement('button');
-            buttonContainer.appendChild(backButton);
-            backButton.innerHTML = '&#10094;'; // Left arrow
-            backButton.onclick = function () {
-                moveTask(listItem, 'back');
+        const _0x3d328d = _0x4ab74a ? document[_0x1d9670(0x191)](_0x1d9670(0x15a)) : _0x483f1a ? document[_0x1d9670(0x191)]('done-list') : document[_0x1d9670(0x191)](_0x1d9670(0x13f)),
+            _0x1aa215 = document[_0x1d9670(0x193)]('li');
+        _0x1aa215['id'] = _0x1d9670(0x15e) + Date['now'](), _0x1aa215[_0x1d9670(0x17d)] = _0x483f1a ? 'completed' : _0x4ab74a ? _0x1d9670(0x18c) : '', _0x1aa215['draggable'] = !![];
+        const _0xcbce2b = document[_0x1d9670(0x193)](_0x1d9670(0x14b));
+        _0xcbce2b[_0x1d9670(0x136)] = _0x1b6739, _0x1aa215[_0x1d9670(0x1a2)](_0xcbce2b);
+        const _0x188baa = document[_0x1d9670(0x193)](_0x1d9670(0x13b));
+        _0x188baa[_0x1d9670(0x17d)] = _0x1d9670(0x169);
+        if (_0x4ab74a || _0x483f1a) {
+            const _0xf2e404 = document[_0x1d9670(0x193)]('button');
+            _0x188baa[_0x1d9670(0x1a2)](_0xf2e404), _0xf2e404['innerHTML'] = _0x1d9670(0x186), _0xf2e404[_0x1d9670(0x194)] = function () {
+                const _0x385ed6 = _0x1d9670;
+                moveTask(_0x1aa215, _0x385ed6(0x179));
             };
         }
-
-        if (!completed) {
-            const forwardButton = document.createElement('button');
-            forwardButton.innerHTML = '&#10095;'; // Right arrow
-            forwardButton.onclick = function () {
-                moveTask(listItem, 'forward');
-            };
-            buttonContainer.appendChild(forwardButton);
+        if (!_0x483f1a) {
+            const _0x1c6b8b = document[_0x1d9670(0x193)](_0x1d9670(0x12f));
+            _0x1c6b8b['innerHTML'] = _0x1d9670(0x155), _0x1c6b8b[_0x1d9670(0x194)] = function () {
+                const _0x33aad9 = _0x1d9670;
+                moveTask(_0x1aa215, _0x33aad9(0x160));
+            }, _0x188baa[_0x1d9670(0x1a2)](_0x1c6b8b);
         }
-
-        const removeButton = document.createElement('button');
-        removeButton.innerHTML = '&#10005;'; // X mark
-        removeButton.onclick = function () {
-            listItem.remove();
-            tasks = tasks.filter(t => t.text !== taskText);
-            saveToLocalStorage();
-        };
-        buttonContainer.appendChild(removeButton);
-
-        listItem.appendChild(buttonContainer);
-        taskList.appendChild(listItem);
-
-        taskInput.value = '';
-        tasks.push({text: taskText, completed, isInProgress});
-
-        listItem.addEventListener('dragstart', handleDragStart);
-        listItem.addEventListener('dragend', handleDragEnd);
-
-        saveToLocalStorage();
+        const _0x2fb731 = document[_0x1d9670(0x193)](_0x1d9670(0x12f));
+        _0x2fb731[_0x1d9670(0x16c)] = _0x1d9670(0x15f), _0x2fb731[_0x1d9670(0x194)] = function () {
+            const _0x29ddb8 = _0x1d9670;
+            _0x1aa215[_0x29ddb8(0x15c)](), tasks = tasks[_0x29ddb8(0x164)](_0x442ed6 => _0x442ed6[_0x29ddb8(0x131)] !== _0x1b6739), saveToLocalStorage();
+        }, _0x188baa[_0x1d9670(0x1a2)](_0x2fb731), _0x1aa215['appendChild'](_0x188baa), _0x3d328d[_0x1d9670(0x1a2)](_0x1aa215), _0x59b9be[_0x1d9670(0x165)] = '', tasks[_0x1d9670(0x175)]({
+            'text': _0x1b6739,
+            'completed': _0x483f1a,
+            'isInProgress': _0x4ab74a
+        }), _0x1aa215[_0x1d9670(0x18d)](_0x1d9670(0x17a), handleDragStart), _0x1aa215[_0x1d9670(0x18d)]('dragend', handleDragEnd), saveToLocalStorage();
     }
 
-    // Move a task to a different list
-    function moveTask(taskElement, direction) {
-        const currentList = taskElement.parentElement;
-        let targetList;
-
-        if (direction === 'forward') {
-            if (currentList.id === 'todo-list') {
-                targetList = document.getElementById('inprogress-list');
-            } else if (currentList.id === 'inprogress-list') {
-                targetList = document.getElementById('done-list');
-            }
-        } else if (direction === 'back') {
-            if (currentList.id === 'inprogress-list') {
-                targetList = document.getElementById('todo-list');
-            } else if (currentList.id === 'done-list') {
-                targetList = document.getElementById('inprogress-list');
+    function moveTask(_0xe2a13e, _0x47b1b3) {
+        const _0x1469ce = _0x315fd5, _0x30b401 = _0xe2a13e[_0x1469ce(0x152)];
+        let _0x173340;
+        if (_0x47b1b3 === 'forward') {
+            if (_0x30b401['id'] === _0x1469ce(0x13f)) _0x173340 = document[_0x1469ce(0x191)](_0x1469ce(0x15a)); else _0x30b401['id'] === _0x1469ce(0x15a) && (_0x173340 = document[_0x1469ce(0x191)](_0x1469ce(0x14e)));
+        } else {
+            if (_0x47b1b3 === _0x1469ce(0x179)) {
+                if (_0x30b401['id'] === 'inprogress-list') _0x173340 = document[_0x1469ce(0x191)](_0x1469ce(0x13f)); else _0x30b401['id'] === _0x1469ce(0x14e) && (_0x173340 = document[_0x1469ce(0x191)](_0x1469ce(0x15a)));
             }
         }
-
-        if (targetList) {
-            targetList.appendChild(taskElement);
-            updateTaskStatus(taskElement, targetList.id);
-        }
+        _0x173340 && (_0x173340['appendChild'](_0xe2a13e), updateTaskStatus(_0xe2a13e, _0x173340['id']));
     }
 
-    function updateTaskStatus(taskElement, listId) {
-        const taskText = taskElement.querySelector('span').textContent;
-        const taskIndex = tasks.findIndex(t => t.text === taskText);
-
-        if (taskIndex !== -1) {
-            tasks[taskIndex].completed = listId === 'done-list';
-            tasks[taskIndex].isInProgress = listId === 'inprogress-list';
+    function updateTaskStatus(_0x14d765, _0x597372) {
+        const _0x335245 = _0x315fd5, _0x110f4a = _0x14d765[_0x335245(0x16a)](_0x335245(0x14b))['textContent'],
+            _0x1305b4 = tasks[_0x335245(0x142)](_0x5dcb49 => _0x5dcb49[_0x335245(0x131)] === _0x110f4a);
+        _0x1305b4 !== -0x1 && (tasks[_0x1305b4][_0x335245(0x132)] = _0x597372 === 'done-list', tasks[_0x1305b4][_0x335245(0x189)] = _0x597372 === 'inprogress-list');
+        const _0x5abb97 = _0x14d765[_0x335245(0x16a)](_0x335245(0x172));
+        _0x5abb97['innerHTML'] = '';
+        if (_0x597372 !== _0x335245(0x13f)) {
+            const _0x4ac963 = document[_0x335245(0x193)]('button');
+            _0x4ac963[_0x335245(0x16c)] = _0x335245(0x186), _0x4ac963[_0x335245(0x194)] = function () {
+                const _0xc01a89 = _0x335245;
+                moveTask(_0x14d765, _0xc01a89(0x179));
+            }, _0x5abb97[_0x335245(0x1a2)](_0x4ac963);
         }
-
-        const buttonContainer = taskElement.querySelector('.task-buttons');
-        buttonContainer.innerHTML = '';
-
-        if (listId !== 'todo-list') {
-            const backButton = document.createElement('button');
-            backButton.innerHTML = '&#10094;'; // Left arrow
-            backButton.onclick = function () {
-                moveTask(taskElement, 'back');
-            };
-            buttonContainer.appendChild(backButton);
+        if (_0x597372 !== 'done-list') {
+            const _0x198464 = document[_0x335245(0x193)](_0x335245(0x12f));
+            _0x198464[_0x335245(0x16c)] = _0x335245(0x155), _0x198464['onclick'] = function () {
+                const _0x38c074 = _0x335245;
+                moveTask(_0x14d765, _0x38c074(0x160));
+            }, _0x5abb97[_0x335245(0x1a2)](_0x198464);
         }
-
-        if (listId !== 'done-list') {
-            const forwardButton = document.createElement('button');
-            forwardButton.innerHTML = '&#10095;'; // Right arrow
-            forwardButton.onclick = function () {
-                moveTask(taskElement, 'forward');
-            };
-            buttonContainer.appendChild(forwardButton);
-        }
-
-        const removeButton = document.createElement('button');
-        removeButton.innerHTML = '&#10005;'; // X mark
-        removeButton.onclick = function () {
-            taskElement.remove();
-            tasks = tasks.filter(t => t.text !== taskText);
-            saveToLocalStorage();
-        };
-        buttonContainer.appendChild(removeButton);
-
-        saveToLocalStorage();
+        const _0x3f3419 = document[_0x335245(0x193)]('button');
+        _0x3f3419[_0x335245(0x16c)] = _0x335245(0x15f), _0x3f3419[_0x335245(0x194)] = function () {
+            const _0x5d3e12 = _0x335245;
+            _0x14d765[_0x5d3e12(0x15c)](), tasks = tasks[_0x5d3e12(0x164)](_0x27abfb => _0x27abfb[_0x5d3e12(0x131)] !== _0x110f4a), saveToLocalStorage();
+        }, _0x5abb97[_0x335245(0x1a2)](_0x3f3419), saveToLocalStorage();
     }
 
-    // Set the timer type and adjust duration
-    function setTimerType(type) {
-        currentTimerType = type;
-        switch (type) {
-            case 'pomodoro':
-                duration = 25 * 60;
-                document.documentElement.style.setProperty('--timer-color', 'var(--pomodoro-color)');
+    function setTimerType(_0x444bbc) {
+        const _0x4d0792 = _0x315fd5;
+        currentTimerType = _0x444bbc;
+        switch (_0x444bbc) {
+            case _0x4d0792(0x130):
+                duration = 0x19 * 0x3c, document[_0x4d0792(0x149)]['style'][_0x4d0792(0x17c)](_0x4d0792(0x196), 'var(--pomodoro-color)');
                 break;
-            case 'short-break':
-                duration = 5 * 60;
-                document.documentElement.style.setProperty('--timer-color', 'var(--short-break-color)');
+            case _0x4d0792(0x157):
+                duration = 0x5 * 0x3c, document['documentElement'][_0x4d0792(0x182)][_0x4d0792(0x17c)](_0x4d0792(0x196), 'var(--short-break-color)');
                 break;
-            case 'long-break':
-                duration = 15 * 60;
-                document.documentElement.style.setProperty('--timer-color', 'var(--long-break-color)');
+            case'long-break':
+                duration = 0xf * 0x3c, document[_0x4d0792(0x149)][_0x4d0792(0x182)][_0x4d0792(0x17c)](_0x4d0792(0x196), _0x4d0792(0x168));
                 break;
         }
-        document.body.style.backgroundColor = getComputedStyle(document.documentElement).getPropertyValue('--timer-color');
-        remainingTime = duration;
-        updateClock();
-
-        cycleStage = findNearestStage(type);
-
-        updateCycleIndicator();
-        saveToLocalStorage();
+        document[_0x4d0792(0x170)][_0x4d0792(0x182)][_0x4d0792(0x133)] = getComputedStyle(document[_0x4d0792(0x149)])[_0x4d0792(0x12c)](_0x4d0792(0x196)), remainingTime = duration, updateClock(), cycleStage = findNearestStage(_0x444bbc), updateCycleIndicator(), saveToLocalStorage();
     }
 
-    function findNearestStage(type) {
-        const currentIndex = cycleStage % defaultCycle.length;
-        let nearestIndex = currentIndex;
-        let minDistance = defaultCycle.length;
-
-        for (let i = 0; i < defaultCycle.length; i++) {
-            if (defaultCycle[i] === type) {
-                const distance = Math.min(
-                    Math.abs(i - currentIndex),
-                    defaultCycle.length - Math.abs(i - currentIndex)
-                );
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    nearestIndex = i;
-                }
+    function findNearestStage(_0x40143c) {
+        const _0x4faa50 = _0x315fd5, _0x1ed9c9 = cycleStage % defaultCycle[_0x4faa50(0x144)];
+        let _0x705915 = _0x1ed9c9, _0x2c6ec3 = defaultCycle[_0x4faa50(0x144)];
+        for (let _0x252fa5 = 0x0; _0x252fa5 < defaultCycle['length']; _0x252fa5++) {
+            if (defaultCycle[_0x252fa5] === _0x40143c) {
+                const _0x4b992c = Math[_0x4faa50(0x16e)](Math['abs'](_0x252fa5 - _0x1ed9c9), defaultCycle[_0x4faa50(0x144)] - Math[_0x4faa50(0x148)](_0x252fa5 - _0x1ed9c9));
+                _0x4b992c < _0x2c6ec3 && (_0x2c6ec3 = _0x4b992c, _0x705915 = _0x252fa5);
             }
         }
-
-        return nearestIndex;
+        return _0x705915;
     }
 
     function finishPomodoro() {
-        cycleStage = (cycleStage + 1) % defaultCycle.length;
-        setTimerType(defaultCycle[cycleStage]);
-        resetTimer();
-        updateCycleIndicator();
-        saveToLocalStorage();
+        const _0x1055db = _0x315fd5;
+        cycleStage = (cycleStage + 0x1) % defaultCycle[_0x1055db(0x144)], setTimerType(defaultCycle[cycleStage]), resetTimer(), updateCycleIndicator(), saveToLocalStorage();
     }
 
-    // Update the cycle indicator text
     function updateCycleIndicator() {
-        const indicator = document.getElementById('cycle-indicator');
-        const currentStage = cycleStage % defaultCycle.length;
-        const stageNames = {
-            'pomodoro': 'Pomodoro',
-            'short-break': 'Short Break',
-            'long-break': 'Long Break'
-        };
-        indicator.textContent = `Stage ${currentStage + 1}/${defaultCycle.length}: ${stageNames[currentTimerType]}`;
+        const _0x1062bf = _0x315fd5, _0x4ad566 = document['getElementById']('cycle-indicator'),
+            _0x41457d = cycleStage % defaultCycle[_0x1062bf(0x144)],
+            _0x54a466 = {'pomodoro': _0x1062bf(0x14a), 'short-break': _0x1062bf(0x139), 'long-break': _0x1062bf(0x190)};
+        _0x4ad566[_0x1062bf(0x136)] = _0x1062bf(0x17f) + (_0x41457d + 0x1) + '/' + defaultCycle[_0x1062bf(0x144)] + ':\x20' + _0x54a466[currentTimerType];
     }
 
-    // Start the timer
     function startTimer() {
         if (isTimerRunning) return;
-        isTimerRunning = true;
-        timer = setInterval(updateTimer, 1000);
-        saveToLocalStorage();
+        isTimerRunning = !![], timer = setInterval(updateTimer, 0x3e8), saveToLocalStorage();
     }
 
-    // Pause the timer
     function pauseTimer() {
-        clearInterval(timer);
-        isTimerRunning = false;
-        saveToLocalStorage();
+        clearInterval(timer), isTimerRunning = ![], saveToLocalStorage();
     }
 
-    // Reset the timer
     function resetTimer() {
-        clearInterval(timer);
-        isTimerRunning = false;
-        remainingTime = duration;
-        updateClock();
-        saveToLocalStorage();
+        clearInterval(timer), isTimerRunning = ![], remainingTime = duration, updateClock(), saveToLocalStorage();
     }
 
-    // Finish the current session and move to the next stage
     function finishSession() {
-        cycleStage = (cycleStage + 1) % defaultCycle.length;
-        setTimerType(defaultCycle[cycleStage]);
-        resetTimer();
-        startTimer(); // Automatically start the next stage
+        const _0x2b5673 = _0x315fd5;
+        cycleStage = (cycleStage + 0x1) % defaultCycle[_0x2b5673(0x144)], setTimerType(defaultCycle[cycleStage]), resetTimer(), startTimer();
     }
 
-    // Update the timer
     function updateTimer() {
         remainingTime--;
-        if (remainingTime <= 0) {
+        if (remainingTime <= 0x0) {
             finishSession();
             return;
         }
-        updateClock();
-        saveToLocalStorage();
+        updateClock(), saveToLocalStorage();
     }
 
-    // Update the clock display
     function updateClock() {
-        const minutes = Math.floor(remainingTime / 60);
-        const seconds = remainingTime % 60;
-        document.querySelector('.clock-face').textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-        const progress = ((duration - remainingTime) / duration) * 360;
-        document.documentElement.style.setProperty('--progress', `${progress}deg`);
+        const _0x4f8bfc = _0x315fd5, _0x3336b8 = Math[_0x4f8bfc(0x14d)](remainingTime / 0x3c),
+            _0x58c70c = remainingTime % 0x3c;
+        document[_0x4f8bfc(0x16a)](_0x4f8bfc(0x16d))[_0x4f8bfc(0x136)] = String(_0x3336b8)[_0x4f8bfc(0x13d)](0x2, '0') + ':' + String(_0x58c70c)[_0x4f8bfc(0x13d)](0x2, '0');
+        const _0x14e335 = (duration - remainingTime) / duration * 0x168;
+        document['documentElement'][_0x4f8bfc(0x182)][_0x4f8bfc(0x17c)](_0x4f8bfc(0x138), _0x14e335 + _0x4f8bfc(0x14c));
     }
 
     function updateDuration() {
-        duration = document.getElementById('duration-slider').value * 60;
-        remainingTime = duration;
-        updateClock();
-        saveToLocalStorage();
+        const _0x3ad4ec = _0x315fd5;
+        duration = document[_0x3ad4ec(0x191)](_0x3ad4ec(0x19e))[_0x3ad4ec(0x165)] * 0x3c, remainingTime = duration, updateClock(), saveToLocalStorage();
     }
 
-    function handleDragStart(e) {
-        e.dataTransfer.setData('text/plain', e.target.id);
-        e.target.classList.add('dragging');
+    function _0x5149() {
+        const _0x424223 = ['https://www.youtube.com/embed/', 'long-break', 'height', 'appendChild', 'width', 'duration', '414sIpOtL', 'getPropertyValue', 'timerState', '706JYsjvL', 'button', 'pomodoro', 'text', 'completed', 'backgroundColor', 'setItem', 'getItem', 'textContent', 'encrypted-media', '--progress', 'Short\x20Break', 'https://www.youtube.com/watch?v=', 'div', 'src', 'padStart', 'parse', 'todo-list', 'new-task', '981852yKhRyM', 'findIndex', 'includes', 'length', 'display', 'remainingTime', '44QrAQEr', 'abs', 'documentElement', 'Pomodoro', 'span', 'deg', 'floor', 'done-list', 'stringify', 'frameBorder', '965SEMuTL', 'parentElement', 'text/plain', 'https://open.spotify.com/', '&#10095;', 'dataTransfer', 'short-break', 'task-list', 'task-column', 'inprogress-list', '.task-list', 'remove', 'classList', 'task-', '&#10005;', 'forward', 'currentTimerType', 'allow', 'toggle', 'filter', 'value', '38qKBerl', 'expanded', 'var(--long-break-color)', 'task-buttons', 'querySelector', '33SzDQGD', 'innerHTML', '.clock-face', 'min', 'forEach', 'body', '122901VDObhq', '.task-buttons', '222901GADnWM', '72HSYGHd', 'push', 'target', 'youtube', '4686hPArbx', 'back', 'dragstart', 'https://open.spotify.com/embed/', 'setProperty', 'className', 'dragging', 'Stage\x20', 'setData', 'contains', 'style', 'autoplay;\x20encrypted-media', 'none', 'drop', '&#10094;', 'querySelectorAll', 'DOMContentLoaded', 'isInProgress', '200', 'closest', 'in-progress', 'addEventListener', 'code,\x20pre', 'dragover', 'Long\x20Break', 'getElementById', 'tasks', 'createElement', 'onclick', '126890FCqEiT', '--timer-color', 'music-embed', 'preventDefault', 'getData', '.task-column', '565994dNsSuz', 'onload', 'iframe', 'duration-slider'];
+        _0x5149 = function () {
+            return _0x424223;
+        };
+        return _0x5149();
     }
 
-    function handleDragEnd(e) {
-        e.target.classList.remove('dragging');
+    function handleDragStart(_0x4b1781) {
+        const _0x1a08fe = _0x315fd5;
+        _0x4b1781['dataTransfer'][_0x1a08fe(0x180)](_0x1a08fe(0x153), _0x4b1781['target']['id']), _0x4b1781[_0x1a08fe(0x176)][_0x1a08fe(0x15d)]['add'](_0x1a08fe(0x17e));
     }
 
-    function handleDragOver(e) {
-        e.preventDefault();
+    function handleDragEnd(_0x34797f) {
+        const _0x4ce727 = _0x315fd5;
+        _0x34797f[_0x4ce727(0x176)][_0x4ce727(0x15d)][_0x4ce727(0x15c)]('dragging');
     }
 
-    function handleDrop(e) {
-        e.preventDefault();
-        const taskId = e.dataTransfer.getData('text');
-        const taskElement = document.getElementById(taskId);
+    function handleDragOver(_0x3af7ab) {
+        const _0x585fee = _0x315fd5;
+        _0x3af7ab[_0x585fee(0x198)]();
+    }
 
-        if (e.target.classList.contains('task-column')) {
-            e.target.querySelector('.task-list').appendChild(taskElement);
-        } else if (e.target.classList.contains('task-list')) {
-            e.target.appendChild(taskElement);
-        } else if (e.target.closest('.task-column')) {
-            e.target.closest('.task-column').querySelector('.task-list').appendChild(taskElement);
+    function handleDrop(_0x3ab8b1) {
+        const _0x320932 = _0x315fd5;
+        _0x3ab8b1[_0x320932(0x198)]();
+        const _0x2d6427 = _0x3ab8b1[_0x320932(0x156)][_0x320932(0x199)](_0x320932(0x131)),
+            _0x232020 = document[_0x320932(0x191)](_0x2d6427);
+        if (_0x3ab8b1['target'][_0x320932(0x15d)][_0x320932(0x181)](_0x320932(0x159))) _0x3ab8b1[_0x320932(0x176)]['querySelector'](_0x320932(0x15b))[_0x320932(0x1a2)](_0x232020); else {
+            if (_0x3ab8b1[_0x320932(0x176)][_0x320932(0x15d)]['contains'](_0x320932(0x158))) _0x3ab8b1['target'][_0x320932(0x1a2)](_0x232020); else _0x3ab8b1[_0x320932(0x176)]['closest'](_0x320932(0x19a)) && _0x3ab8b1['target'][_0x320932(0x18b)]('.task-column')['querySelector'](_0x320932(0x15b))['appendChild'](_0x232020);
         }
-
-        updateTaskStatus(taskElement, taskElement.closest('.task-column').id);
+        updateTaskStatus(_0x232020, _0x232020['closest'](_0x320932(0x19a))['id']);
     }
 
-    // Change music link
     function changeMusic() {
-        const musicLink = document.getElementById('music-link').value;
-        const embedContainer = document.getElementById('music-embed');
-        embedContainer.innerHTML = '';
-
-        if (musicLink.includes('spotify')) {
-            const embedUrl = musicLink.replace('https://open.spotify.com/', 'https://open.spotify.com/embed/');
-            const iframe = document.createElement('iframe');
-            iframe.src = embedUrl;
-            iframe.width = '300';
-            iframe.height = '380';
-            iframe.frameBorder = '0';
-            iframe.allow = 'encrypted-media';
-            embedContainer.appendChild(iframe);
-        } else if (musicLink.includes('youtube')) {
-            const embedUrl = musicLink.replace('https://www.youtube.com/watch?v=', 'https://www.youtube.com/embed/');
-            const iframe = document.createElement('iframe');
-            iframe.src = embedUrl;
-            iframe.width = '300';
-            iframe.height = '200';
-            iframe.frameBorder = '0';
-            iframe.allow = 'autoplay; encrypted-media';
-            embedContainer.appendChild(iframe);
+        const _0x3a3872 = _0x315fd5, _0x523056 = document[_0x3a3872(0x191)]('music-link')[_0x3a3872(0x165)],
+            _0x3691e0 = document['getElementById'](_0x3a3872(0x197));
+        _0x3691e0[_0x3a3872(0x16c)] = '';
+        if (_0x523056[_0x3a3872(0x143)]('spotify')) {
+            const _0x2368e1 = _0x523056['replace'](_0x3a3872(0x154), _0x3a3872(0x17b)),
+                _0x5e0b52 = document['createElement'](_0x3a3872(0x19d));
+            _0x5e0b52[_0x3a3872(0x13c)] = _0x2368e1, _0x5e0b52[_0x3a3872(0x1a3)] = '300', _0x5e0b52['height'] = '380', _0x5e0b52[_0x3a3872(0x150)] = '0', _0x5e0b52[_0x3a3872(0x162)] = _0x3a3872(0x137), _0x3691e0[_0x3a3872(0x1a2)](_0x5e0b52);
+        } else {
+            if (_0x523056[_0x3a3872(0x143)](_0x3a3872(0x177))) {
+                const _0x3a0225 = _0x523056['replace'](_0x3a3872(0x13a), _0x3a3872(0x19f)),
+                    _0x51626d = document[_0x3a3872(0x193)](_0x3a3872(0x19d));
+                _0x51626d['src'] = _0x3a0225, _0x51626d[_0x3a3872(0x1a3)] = '300', _0x51626d[_0x3a3872(0x1a1)] = _0x3a3872(0x18a), _0x51626d[_0x3a3872(0x150)] = '0', _0x51626d[_0x3a3872(0x162)] = _0x3a3872(0x183), _0x3691e0[_0x3a3872(0x1a2)](_0x51626d);
+            }
         }
     }
 
     function toggleMusicSection() {
-        const musicSection = document.getElementById('music-section');
-        musicSection.classList.toggle('expanded');
+        const _0x577fc2 = _0x315fd5, _0x1404dd = document['getElementById']('music-section');
+        _0x1404dd[_0x577fc2(0x15d)][_0x577fc2(0x163)](_0x577fc2(0x167));
     }
 
     function clearAllTasks() {
-        document.getElementById('todo-list').innerHTML = '';
-        document.getElementById('inprogress-list').innerHTML = '';
-        document.getElementById('done-list').innerHTML = '';
-        tasks = [];
-        saveToLocalStorage();
+        const _0x5709f9 = _0x315fd5;
+        document[_0x5709f9(0x191)](_0x5709f9(0x13f))[_0x5709f9(0x16c)] = '', document[_0x5709f9(0x191)]('inprogress-list')[_0x5709f9(0x16c)] = '', document[_0x5709f9(0x191)]('done-list')[_0x5709f9(0x16c)] = '', tasks = [], saveToLocalStorage();
     }
 
-    window.onload = function () {
-        loadFromLocalStorage();
-        updateCycleIndicator();
-
-        const taskColumns = document.querySelectorAll('.task-column');
-        taskColumns.forEach(column => {
-            column.addEventListener('dragover', handleDragOver);
-            column.addEventListener('drop', handleDrop);
+    window[_0x315fd5(0x19c)] = function () {
+        const _0x8d80a3 = _0x315fd5;
+        loadFromLocalStorage(), updateCycleIndicator();
+        const _0x4ab650 = document[_0x8d80a3(0x187)]('.task-column');
+        _0x4ab650[_0x8d80a3(0x16f)](_0x33b613 => {
+            const _0x1a80b4 = _0x8d80a3;
+            _0x33b613[_0x1a80b4(0x18d)](_0x1a80b4(0x18f), handleDragOver), _0x33b613[_0x1a80b4(0x18d)](_0x1a80b4(0x185), handleDrop);
         });
-    };
-    document.addEventListener('DOMContentLoaded', () => {
-        if (remainingTime === undefined || remainingTime === null) {
-            remainingTime = 25 * 60;
-        }
-        updateClock();
+    }, document[_0x315fd5(0x18d)](_0x315fd5(0x188), () => {
+        (remainingTime === undefined || remainingTime === null) && (remainingTime = 0x19 * 0x3c), updateClock();
+    }), document[_0x315fd5(0x187)](_0x315fd5(0x18e))[_0x315fd5(0x16f)](function (_0x132696) {
+        const _0x17f869 = _0x315fd5;
+        _0x132696['style'][_0x17f869(0x145)] = _0x17f869(0x184);
     });
 
 </script>
